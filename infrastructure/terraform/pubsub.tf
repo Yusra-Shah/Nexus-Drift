@@ -37,3 +37,18 @@ resource "google_pubsub_topic" "alerts" {
 
   depends_on = [google_project_service.apis]
 }
+
+resource "google_pubsub_subscription" "graph_updates_reasoning" {
+  name    = "nexusdrift-graph-updates-reasoning"
+  topic   = google_pubsub_topic.graph_updates.id
+  project = var.project_id
+
+  ack_deadline_seconds = 60
+
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "300s"
+  }
+
+  depends_on = [google_pubsub_topic.graph_updates]
+}

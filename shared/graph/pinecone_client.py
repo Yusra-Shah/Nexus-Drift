@@ -39,5 +39,13 @@ class NexusDriftVectors:
             for match in result.get("matches", [])
         ]
 
+    def fetch_embedding(self, node_id: str | UUID) -> list[float]:
+        result = self._index.fetch(ids=[str(node_id)])
+        vectors = result.get("vectors", {})
+        entry = vectors.get(str(node_id))
+        if entry is None:
+            return []
+        return entry.get("values", [])
+
     def delete_embedding(self, node_id: str | UUID) -> None:
         self._index.delete(ids=[str(node_id)])
