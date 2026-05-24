@@ -1,0 +1,83 @@
+substitutions:
+  _REGION: us-central1
+  _PROJECT_ID: ${PROJECT_ID}
+  _ENVIRONMENT: dev
+
+steps:
+  # Step 1: Lint all Python services
+  - name: python:3.11-slim
+    id: lint
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        pip install ruff --quiet
+        ruff check services/ shared/
+
+  # Step 2: Run tests with coverage
+  - name: python:3.11-slim
+    id: test
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        pip install pytest pytest-asyncio pytest-cov pydantic==2.7.0 pydantic-settings==2.3.0 \
+          fastapi==0.115.0 httpx==0.27.0 slowapi==0.1.9 \
+          python-jose[cryptography]==3.3.0 --quiet
+        PYTHONPATH=. python -m pytest services/ --tb=short -q \
+          --cov=services --cov=shared --cov-report=term-missing
+    waitFor: [lint]
+
+  # Step 3: Build Docker images for all services
+  - name: gcr.io/cloud-builders/docker
+    id: build-api
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/api:$COMMIT_SHA
+      - services/api
+    waitFor: [test]
+
+  - name: gcr.io/cloud-builders/docker
+    id: build-ingestion
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/ingestion:$COMMIT_SHA
+      - services/ingestion
+    waitFor: [test]
+
+  - name: gcr.io/cloud-builders/docker
+    id: build-parser
+    args:
+      - build
+      - -t
+      - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/parser:$COMMIT_SHA
+      - services/parser
+    waitFor: [test]
+
+  # Step 4: Deploy to Cloud Run (main branch only)
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy-api
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        if [ "$BRANCH_NAME" = "main" ]; then
+          gcloud run deploy nexusdrift-api \
+            --image ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/api:$COMMIT_SHA \
+            --region ${_REGION} \
+            --platform managed \
+            --allow-unauthenticated \
+            --set-env-vars ENVIRONMENT=${_ENVIRONMENT}
+        fi
+    waitFor: [build-api]
+
+images:
+  - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/api:$COMMIT_SHA
+  - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/ingestion:$COMMIT_SHA
+  - ${_REGION}-docker.pkg.dev/${_PROJECT_ID}/nexusdrift/parser:$COMMIT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
