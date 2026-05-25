@@ -3,11 +3,10 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-import os
 import pytest
 
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 
 @pytest.fixture()
@@ -15,19 +14,12 @@ def client(monkeypatch):
     monkeypatch.setenv("GITHUB_WEBHOOK_SECRET", "test-secret")
     monkeypatch.setenv("GOOGLE_CLOUD_PROJECT", "test-project")
 
-    with (
-        patch("shared.graph.neo4j_client.AsyncGraphDatabase"),
-        patch("shared.graph.pinecone_client.Pinecone"),
-        patch("google.cloud.firestore.Client"),
-        patch("shared.utils.pubsub.pubsub_v1.PublisherClient"),
-    ):
-        from main import app
+    from main import app
 
-        app.state.graph = AsyncMock()
-        app.state.firestore = MagicMock()
-
-        with TestClient(app, raise_server_exceptions=False) as c:
-            yield c
+    with TestClient(app, raise_server_exceptions=False) as c:
+        c.app.state.graph = AsyncMock()
+        c.app.state.firestore = MagicMock()
+        yield c
 
 
 def _github_sig(body: bytes, secret: str) -> str:

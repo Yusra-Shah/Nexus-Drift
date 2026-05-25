@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from google.cloud.firestore_v1 import SERVER_TIMESTAMP
+try:
+    from google.cloud.firestore_v1 import SERVER_TIMESTAMP
+except ImportError:
+    SERVER_TIMESTAMP = None  # type: ignore[assignment]
 
 router = APIRouter()
 

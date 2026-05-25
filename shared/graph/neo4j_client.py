@@ -4,7 +4,11 @@ import os
 from typing import Any
 from uuid import UUID
 
-from neo4j import AsyncDriver, AsyncGraphDatabase
+try:
+    from neo4j import AsyncDriver, AsyncGraphDatabase
+except ImportError:
+    AsyncDriver = None  # type: ignore[assignment,misc]
+    AsyncGraphDatabase = None  # type: ignore[assignment,misc]
 
 
 class NexusDriftGraph:

@@ -2,24 +2,18 @@ from __future__ import annotations
 
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 
 @pytest.fixture()
 def client():
-    with (
-        patch("shared.graph.neo4j_client.AsyncGraphDatabase"),
-        patch("shared.graph.pinecone_client.Pinecone"),
-        patch("google.cloud.firestore.Client"),
-    ):
-        from main import app
+    from main import app
 
-        app.state.graph = AsyncMock()
-        app.state.graph.ping = AsyncMock(return_value=True)
-        app.state.firestore = MagicMock()
-
-        with TestClient(app, raise_server_exceptions=False) as c:
-            yield c
+    with TestClient(app, raise_server_exceptions=False) as c:
+        c.app.state.graph = AsyncMock()
+        c.app.state.graph.ping = AsyncMock(return_value=True)
+        c.app.state.firestore = MagicMock()
+        yield c
 
 
 def test_health_returns_200(client: TestClient) -> None:

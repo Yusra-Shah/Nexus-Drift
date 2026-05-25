@@ -4,7 +4,10 @@ import os
 from typing import Any
 from uuid import UUID
 
-from pinecone import Pinecone
+try:
+    from pinecone import Pinecone
+except ImportError:
+    Pinecone = None  # type: ignore[assignment,misc]
 
 
 class NexusDriftVectors:
