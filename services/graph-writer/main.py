@@ -84,4 +84,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    from shared.utils.health_server import start_health_server
+    start_health_server()
     main()

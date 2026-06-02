@@ -1,0 +1,17 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/mcp-server:latest'
+      - -f
+      - services/mcp-server/Dockerfile
+      - .
+
+images:
+  - '$_REGISTRY/mcp-server:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '600s'

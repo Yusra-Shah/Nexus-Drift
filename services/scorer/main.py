@@ -72,6 +72,8 @@ async def _run() -> None:
 
 
 def main() -> None:
+    from shared.utils.health_server import start_health_server
+    start_health_server()
     signal.signal(signal.SIGTERM, _handle_sigterm)
     asyncio.run(_run())
 

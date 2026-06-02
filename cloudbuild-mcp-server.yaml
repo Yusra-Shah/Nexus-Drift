@@ -1,0 +1,8 @@
+﻿steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [build, -t, 'us-central1-docker.pkg.dev/adk-codelab-2026/nexusdrift/mcp-server:latest', -f, 'services/mcp-server/Dockerfile', .]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [push, 'us-central1-docker.pkg.dev/adk-codelab-2026/nexusdrift/mcp-server:latest']
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: '900s'

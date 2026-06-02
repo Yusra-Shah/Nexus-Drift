@@ -1,15 +1,8 @@
-FROM python:3.11-slim
-
+﻿FROM python:3.11-slim
 WORKDIR /app
-
-COPY requirements.txt .
+COPY services/reasoning/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
-
-COPY ../../shared /app/shared
-COPY . /app/services/reasoning
-
-WORKDIR /app/services/reasoning
-
-ENV PYTHONPATH="/app:/app/services/reasoning"
-
+COPY services/reasoning/ /app/
+COPY shared /app/shared
+ENV PYTHONPATH=/app
 CMD ["python", "main.py"]

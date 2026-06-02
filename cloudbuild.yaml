@@ -1,0 +1,88 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/api:latest'
+      - -f
+      - services/api/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/ingestion:latest'
+      - -f
+      - services/ingestion/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/parser:latest'
+      - -f
+      - services/parser/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/graph-writer:latest'
+      - -f
+      - services/graph-writer/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/reasoning:latest'
+      - -f
+      - services/reasoning/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/watchtower:latest'
+      - -f
+      - services/watchtower/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/scorer:latest'
+      - -f
+      - services/scorer/Dockerfile
+      - .
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - '$_REGISTRY/mcp-server:latest'
+      - -f
+      - services/mcp-server/Dockerfile
+      - .
+
+images:
+  - '$_REGISTRY/api:latest'
+  - '$_REGISTRY/ingestion:latest'
+  - '$_REGISTRY/parser:latest'
+  - '$_REGISTRY/graph-writer:latest'
+  - '$_REGISTRY/reasoning:latest'
+  - '$_REGISTRY/watchtower:latest'
+  - '$_REGISTRY/scorer:latest'
+  - '$_REGISTRY/mcp-server:latest'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1800s'
