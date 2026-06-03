@@ -69,14 +69,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:cen
 .card3 p{font-size:15px;line-height:1.65;opacity:.75}
 .bento{padding:100px 48px 120px;background:#fff;overflow:hidden}
 .bento-h{font-size:clamp(2.2rem,5.5vw,5.5rem);font-weight:900;letter-spacing:-.03em;text-transform:uppercase;text-align:center;margin-bottom:0;color:#000}
-.bento-arena{position:relative;width:100%;height:680px;margin-top:0}
-.bi{position:absolute;border-radius:20px;display:flex;align-items:center;justify-content:center;font-weight:700;user-select:none;will-change:transform}
-@keyframes flt{0%,100%{translate:0 0}50%{translate:0 -14px}}
-.bi{animation:flt 7s ease-in-out infinite}
-.bi:nth-child(odd){animation-duration:8s}
-.bi:nth-child(3n){animation-duration:6.5s;animation-delay:-2s}
-.bi:nth-child(4n){animation-delay:-3.5s}
-.bi:nth-child(5n){animation-delay:-1.2s}
+.bento-arena{position:relative;width:100%;min-height:620px;margin-top:0;overflow:hidden}
+.bi{position:absolute;display:flex;user-select:none;will-change:transform;cursor:default;transition:transform .25s cubic-bezier(.22,1,.36,1),outline .15s}
 .score-sec{min-height:100vh;background:#00E5CC;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 48px;position:relative;overflow:hidden}
 .score-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(255,255,255,.18) 0%,transparent 70%)}
 .score-eye{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.45);margin-bottom:16px;position:relative}
@@ -258,7 +252,9 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
 
       <section className="bento" id="bento">
         <h2 className="bento-h reveal">YOUR COGNITION<br />GRAPH AWAITS</h2>
-        <div className="bento-arena" id="arena"></div>
+        <div className="bento-arena" id="arena">
+          <canvas id="bento-lines" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:0}} />
+        </div>
       </section>
 
       <section className="score-sec" id="score">
@@ -547,39 +543,101 @@ function frame(){
 frame();
 })();
 
-// BENTO ITEMS
-const arenaItems = [
-  { style:'width:168px;height:168px;top:48px;left:6%;background:#0088CC;border-radius:28px;color:#fff;flex-direction:column;gap:10px;font-size:14px',
-    html:'<svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="9" cy="18" r="5" fill="#00E5CC"/><circle cx="27" cy="9" r="4" fill="#7B2FFF"/><circle cx="27" cy="27" r="4" fill="#FF5050"/><line x1="14" y1="18" x2="23" y2="10" stroke="white" stroke-width="1.5" opacity=".5"/><line x1="14" y1="18" x2="23" y2="26" stroke="white" stroke-width="1.5" opacity=".5"/></svg>Graph Explorer' },
-  { style:'width:104px;height:104px;top:32px;left:28%;background:#FF8C00;border-radius:50%;font-size:36px',
-    html:'🧠' },
-  { style:'width:260px;height:108px;top:200px;left:54%;background:#111;color:#fff;border-radius:18px;flex-direction:column;align-items:flex-start;padding:20px;gap:6px',
-    html:'<span style="color:#FF5050;font-size:11px;font-weight:800;letter-spacing:.06em">RISK FORECASTING</span><span style="font-size:14px;font-weight:700">Predict before it breaks</span>' },
-  { style:'width:200px;height:88px;top:330px;left:16%;background:#f5f5f5;border-radius:18px;flex-direction:column;align-items:flex-start;padding:18px;gap:4px',
-    html:'<span style="font-size:11px;font-weight:700;letter-spacing:.05em;color:#999">TIME MACHINE</span><span style="font-size:13px;font-weight:700">Navigate your history</span>' },
-  { style:'width:200px;height:52px;top:470px;left:38%;background:#DCFF2E;border-radius:999px;font-size:13px;color:#000;font-weight:800',
-    html:'⚡ Near-instant reasoning' },
-  { style:'width:220px;height:60px;top:72px;right:10%;background:#111;color:#00E5CC;border-radius:999px;font-size:15px;font-weight:800',
-    html:'Consciousness Score: 84' },
-  { style:'width:180px;height:64px;top:390px;right:7%;background:#f5f5f5;border-radius:999px;font-size:13px;color:#000;gap:10px',
-    html:'<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22C55E"></span>11 agents running' },
-  { style:'width:84px;height:84px;bottom:80px;left:10%;background:#00E5CC;border-radius:50%;font-size:11px;color:#000;font-weight:900;letter-spacing:.06em;flex-direction:column;gap:4px',
-    html:'<span style="display:block;width:8px;height:8px;border-radius:50%;background:#000;animation:bpulse 1.5s infinite"></span>LIVE AI' },
-];
-
-const arena = document.getElementById('arena');
-arenaItems.forEach((item, i) => {
-  const el = document.createElement('div');
-  el.className = 'bi';
-  el.style.cssText = 'display:flex;' + item.style + ';animation-delay:-' + (i*1.1) + 's';
-  el.innerHTML = item.html;
-  arena.appendChild(el);
-});
-
-const ct = document.createElement('div');
-ct.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:0';
-ct.innerHTML='<div style="font-size:clamp(3rem,6vw,5.5rem);font-weight:900;letter-spacing:-.03em;color:#f0f0f0;text-transform:uppercase;line-height:.9">YOUR COGNITION<br>GRAPH AWAITS</div>';
-arena.insertBefore(ct, arena.firstChild);
+// BENTO LISSAJOUS CONSTELLATION
+(function(){
+  var arena2=document.getElementById('arena');
+  if(!arena2) return;
+  var ELEMS=[
+    {w:180,h:80, sx:35, sy:35, fx:.52,fy:.61,ax:22,ay:18,px:0,   py:.8,
+     cs:'background:#111;border-radius:16px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;',
+     ht:'<span style="font-size:10px;color:#00E5CC;font-weight:800;letter-spacing:.1em;text-transform:uppercase">GRAPH EXPLORER</span><span style="font-size:13px;color:#fff;font-weight:500">25 nodes in view</span>'},
+    {w:90, h:90, sx:278,sy:28, fx:.63,fy:.48,ax:18,ay:24,px:1.2, py:2.1,
+     cs:'background:#00E5CC;border-radius:20px;flex-direction:column;align-items:center;justify-content:center;gap:4px;',
+     ht:'<span style="font-size:11px;color:#000;font-weight:800;letter-spacing:.08em;text-transform:uppercase">DECISION</span><span style="font-size:11px;color:rgba(0,0,0,.7);font-weight:500">architectural</span>'},
+    {w:200,h:72, sx:470,sy:52, fx:.71,fy:.55,ax:20,ay:20,px:.5,  py:1.7,
+     cs:'background:#111;border-radius:12px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;',
+     ht:'<span style="font-size:10px;color:#FF4444;font-weight:800;letter-spacing:.08em;text-transform:uppercase">RISK FORECASTING</span><span style="font-size:13px;color:#fff;font-weight:500">Predict before it breaks</span>'},
+    {w:190,h:72, sx:688,sy:38, fx:.44,fy:.67,ax:16,ay:22,px:2.3, py:.4,
+     cs:'background:#f5f5f5;border-radius:12px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;',
+     ht:'<span style="font-size:10px;color:#333;font-weight:800;letter-spacing:.08em;text-transform:uppercase">TIME MACHINE</span><span style="font-size:13px;color:#333;font-weight:500">Navigate your history</span>'},
+    {w:160,h:44, sx:55, sy:200,fx:.58,fy:.72,ax:24,ay:16,px:3.1, py:1.0,
+     cs:'background:#DCFF2E;border-radius:999px;padding:0 22px;align-items:center;justify-content:center;',
+     ht:'<span style="font-size:12px;color:#000;font-weight:800">Near-instant reasoning</span>'},
+    {w:170,h:44, sx:298,sy:180,fx:.66,fy:.49,ax:20,ay:20,px:.9,  py:2.8,
+     cs:'background:#111;border-radius:999px;padding:0 16px;align-items:center;gap:10px;',
+     ht:'<span style="width:8px;height:8px;border-radius:50%;background:#00E5CC;flex-shrink:0;display:inline-block"></span><span style="font-size:13px;color:#fff;font-weight:500;font-family:Courier New,monospace">Consciousness 84</span>'},
+    {w:170,h:64, sx:542,sy:158,fx:.53,fy:.69,ax:22,ay:18,px:1.8, py:.3,
+     cs:'background:#fff;border:1px solid rgba(0,0,0,.1);border-radius:12px;padding:0 16px;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;',
+     ht:'<span style="font-size:13px;color:#333;font-weight:500">11 agents running</span><div style="display:flex;gap:5px;align-items:center"><span style="width:6px;height:6px;border-radius:50%;background:#00E5CC;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:#7B2FFF;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:#00E5CC;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:#7B2FFF;display:inline-block"></span></div>'},
+    {w:72, h:72, sx:760,sy:180,fx:.79,fy:.56,ax:14,ay:22,px:2.6, py:1.5,
+     cs:'background:#00E5CC;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:2px;',
+     ht:'<span style="font-size:11px;color:#000;font-weight:800;letter-spacing:.06em">LIVE</span><span style="font-size:11px;color:#000;font-weight:800;letter-spacing:.06em">AI</span>'},
+    {w:160,h:72, sx:38, sy:380,fx:.47,fy:.64,ax:20,ay:18,px:1.4, py:3.2,
+     cs:'background:#111;border-radius:12px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;position:relative;overflow:hidden;',
+     ht:'<span style="font-size:10px;color:#00E5CC;font-weight:800;letter-spacing:.08em;text-transform:uppercase">WATCHTOWER</span><span style="font-size:13px;color:#fff;font-weight:500">3 alerts active</span><div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:#FF4444"></div>'},
+    {w:180,h:64, sx:255,sy:398,fx:.61,fy:.43,ax:18,ay:24,px:.7,  py:1.9,
+     cs:'background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:0 16px;flex-direction:column;align-items:flex-start;justify-content:center;gap:8px;',
+     ht:'<span style="font-size:10px;color:#333;font-weight:800;letter-spacing:.08em;text-transform:uppercase">EXPERTISE MAP</span><div style="display:flex;align-items:flex-end;gap:3px;height:14px"><span style="width:8px;height:8px;background:#00E5CC;border-radius:1px;display:inline-block"></span><span style="width:8px;height:14px;background:#00E5CC;border-radius:1px;display:inline-block"></span><span style="width:8px;height:6px;background:#00E5CC;border-radius:1px;display:inline-block"></span><span style="width:8px;height:12px;background:#00E5CC;border-radius:1px;display:inline-block"></span><span style="width:8px;height:10px;background:#00E5CC;border-radius:1px;display:inline-block"></span></div>'},
+    {w:160,h:72, sx:502,sy:380,fx:.55,fy:.73,ax:22,ay:16,px:2.0, py:.6,
+     cs:'background:#7B2FFF;border-radius:16px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;',
+     ht:'<span style="font-size:10px;color:#fff;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.8">SIMULATION</span><span style="font-size:13px;color:#fff;font-weight:500">73% success rate</span>'},
+    {w:190,h:72, sx:700,sy:380,fx:.68,fy:.51,ax:16,ay:20,px:3.4, py:2.2,
+     cs:'background:#f0f0f0;border-radius:12px;padding:0 18px;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;',
+     ht:'<span style="font-size:10px;color:#333;font-weight:800;letter-spacing:.08em;text-transform:uppercase">DECISION DNA</span><span style="font-size:12px;color:#888;font-weight:400">Pattern: avoid vendor lock-in</span>'},
+  ];
+  var items=ELEMS.map(function(cfg){
+    var el=document.createElement('div');
+    el.className='bi';
+    el.style.cssText='display:flex;position:absolute;z-index:1;'+cfg.cs;
+    el.style.width=cfg.w+'px'; el.style.height=cfg.h+'px';
+    el.style.left=cfg.sx+'px'; el.style.top=cfg.sy+'px';
+    el.innerHTML=cfg.ht;
+    arena2.appendChild(el);
+    var h=false;
+    el.addEventListener('mouseenter',function(){h=true;el.style.transform='scale(1.04)';el.style.outline='1px solid rgba(0,0,0,0.15)';});
+    el.addEventListener('mouseleave',function(){h=false;el.style.transform='';el.style.outline='';});
+    return {el:el,cfg:cfg,hov:function(){return h;},cx:cfg.sx+cfg.w*.5,cy:cfg.sy+cfg.h*.5};
+  });
+  var wm=document.createElement('div');
+  wm.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:0';
+  wm.innerHTML='<div style="font-size:clamp(3rem,6vw,5.5rem);font-weight:900;letter-spacing:-.03em;color:#f0f0f0;text-transform:uppercase;line-height:.9">YOUR COGNITION<br>GRAPH AWAITS</div>';
+  arena2.insertBefore(wm,arena2.firstChild);
+  var lc=document.getElementById('bento-lines');
+  var lctx=lc?lc.getContext('2d'):null;
+  function resizeLC(){if(!lc)return;lc.width=arena2.offsetWidth||900;lc.height=arena2.offsetHeight||620;}
+  resizeLC(); window.addEventListener('resize',resizeLC);
+  var t0=null,lastLF=0;
+  function bentoFrame(ts){
+    if(!t0)t0=ts;
+    var t=(ts-t0)*0.001;
+    items.forEach(function(it){
+      if(it.hov())return;
+      var x=it.cfg.sx+it.cfg.ax*Math.sin(it.cfg.fx*t+it.cfg.px);
+      var y=it.cfg.sy+it.cfg.ay*Math.sin(it.cfg.fy*t+it.cfg.py);
+      it.el.style.left=x+'px'; it.el.style.top=y+'px';
+      it.cx=x+it.cfg.w*.5; it.cy=y+it.cfg.h*.5;
+    });
+    if(lctx&&ts-lastLF>=33){
+      lastLF=ts; lctx.clearRect(0,0,lc.width,lc.height);
+      var P=220;
+      for(var i=0;i<items.length-1;i++){
+        for(var j=i+1;j<items.length;j++){
+          var dx=items[j].cx-items[i].cx,dy=items[j].cy-items[i].cy;
+          var d=Math.sqrt(dx*dx+dy*dy);
+          if(d<P){
+            var isH=items[i].hov()||items[j].hov();
+            var a=(1-d/P);
+            lctx.beginPath();lctx.moveTo(items[i].cx,items[i].cy);lctx.lineTo(items[j].cx,items[j].cy);
+            lctx.strokeStyle=isH?'rgba(0,229,204,'+(a*.5).toFixed(3)+')':'rgba(0,0,0,'+(a*.08).toFixed(3)+')';
+            lctx.lineWidth=1;lctx.stroke();
+          }
+        }
+      }
+    }
+    requestAnimationFrame(bentoFrame);
+  }
+  requestAnimationFrame(bentoFrame);
+})();
 
 // SCORE GAUGE
 function drawGauge(val) {
@@ -645,16 +703,6 @@ document.querySelectorAll('.card3').forEach(card => {
     card.style.transform='perspective(700px) rotateX('+(-y*10)+'deg) rotateY('+(x*10)+'deg) translateY(-6px) scale(1.01)';
   });
   card.addEventListener('mouseleave', ()=>{ card.style.transform=''; });
-});
-
-// BENTO PARALLAX
-document.addEventListener('mousemove', e => {
-  const mx=(e.clientX/window.innerWidth-.5)*2;
-  const my=(e.clientY/window.innerHeight-.5)*2;
-  document.querySelectorAll('.bi').forEach((el,i) => {
-    const d=.15+((i%4)*.08);
-    el.style.transform='translate('+(mx*d*18)+'px,'+(my*d*18)+'px)';
-  });
 });
 
 // DEV TABS
