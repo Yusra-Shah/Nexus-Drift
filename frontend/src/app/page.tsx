@@ -440,77 +440,112 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
       </footer>
 
       <script dangerouslySetInnerHTML={{__html:`
-// KNOWLEDGE GRAPH
+// CONSTELLATION GRAPH
+(function(){
 const canvas = document.getElementById('graph');
-const cx = canvas.getContext('2d');
+if(!canvas) return;
+const ctx = canvas.getContext('2d');
 let W, H;
-function resize() {
-  const wrap = canvas.parentElement;
-  W = canvas.width = wrap.offsetWidth;
-  H = canvas.height = wrap.offsetHeight || 440;
+function resize(){
+  W = canvas.width = canvas.parentElement.offsetWidth || 800;
+  H = canvas.height = Math.max(canvas.parentElement.offsetHeight||0, 400);
 }
 resize();
-window.addEventListener('resize', () => { resize(); buildNodes(); });
-
-const TYPES = [
-  { label:'Decision',     color:'#00E5CC', r:13 },
-  { label:'Risk',         color:'#FF5050', r:11 },
-  { label:'Expertise',    color:'#7B2FFF', r:12 },
-  { label:'Contradiction',color:'#EF4444', r:9  },
-  { label:'Artifact',     color:'#888888', r:9  },
-  { label:'Concept',      color:'#EAB308', r:10 },
+window.addEventListener('resize', ()=>{ resize(); initNodes(); });
+const NODE_DEF = [
+  {label:'Migrate auth',      type:'Decision',      color:'#00E5CC', r:6},
+  {label:'Q3 decision',       type:'Decision',      color:'#00E5CC', r:6},
+  {label:'Neo4j adoption',    type:'Decision',      color:'#00E5CC', r:6},
+  {label:'Deprecate API',     type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Adopt Clerk',       type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Turbopack switch',  type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Python 3.11',       type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Stripe billing',    type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Q4 planning',       type:'Decision',      color:'#00E5CC', r:5},
+  {label:'Bus factor risk',   type:'Risk',          color:'#FF4444', r:6},
+  {label:'Auth gap risk',     type:'Risk',          color:'#FF4444', r:5},
+  {label:'ML pipeline gap',   type:'Risk',          color:'#FF4444', r:5},
+  {label:'React stale risk',  type:'Risk',          color:'#FF4444', r:5},
+  {label:'DevOps SPOF',       type:'Risk',          color:'#FF4444', r:5},
+  {label:'Slack bus factor',  type:'Risk',          color:'#FF4444', r:5},
+  {label:'Mobile SPOF',       type:'Risk',          color:'#FF4444', r:5},
+  {label:'Sarah Chen',        type:'Person',        color:'#7B2FFF', r:6},
+  {label:'James Park',        type:'Person',        color:'#7B2FFF', r:5},
+  {label:'Priya Nair',        type:'Person',        color:'#7B2FFF', r:5},
+  {label:'Alex Kim',          type:'Person',        color:'#7B2FFF', r:5},
+  {label:'Jordan Lee',        type:'Person',        color:'#7B2FFF', r:5},
+  {label:'Marcus Rodriguez',  type:'Person',        color:'#7B2FFF', r:5},
+  {label:'Org Cognition',     type:'Concept',       color:'#FFB800', r:5},
+  {label:'Knowledge Graph',   type:'Concept',       color:'#FFB800', r:5},
+  {label:'Bus Factor',        type:'Concept',       color:'#FFB800', r:4},
+  {label:'Decision DNA',      type:'Concept',       color:'#FFB800', r:4},
+  {label:'Expertise Domain',  type:'Concept',       color:'#FFB800', r:4},
+  {label:'Arch contradiction',type:'Contradiction', color:'#FF6B2B', r:6},
+  {label:'API contradiction', type:'Contradiction', color:'#FF6B2B', r:5},
+  {label:'Monolith vs MSvc',  type:'Contradiction', color:'#FF6B2B', r:5},
 ];
-
-let nodes=[], edges=[];
-function buildNodes() {
-  nodes = Array.from({length:20}, (_,i) => {
-    const t = TYPES[i % TYPES.length];
-    return { x:80+Math.random()*(W-160), y:50+Math.random()*(H-100),
-      vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35,
-      ph:Math.random()*Math.PI*2, ps:.018+Math.random()*.014, ...t };
-  });
-  edges = [];
-  nodes.forEach((_,i) => {
-    const n = 2+Math.floor(Math.random()*2);
-    for(let j=0;j<n;j++){
-      const t=Math.floor(Math.random()*nodes.length);
-      if(t!==i) edges.push([i,t]);
+let gNodes=[];
+function initNodes(){
+  gNodes=NODE_DEF.map(nd=>({...nd,
+    x:nd.r+24+Math.random()*(W-nd.r*2-48),
+    y:nd.r+24+Math.random()*(H-nd.r*2-52),
+    vx:(Math.random()-.5)*0.38, vy:(Math.random()-.5)*0.38,
+  }));
+}
+initNodes();
+const PROX=180; let hov=null;
+canvas.addEventListener('mousemove',e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  let best=null,bd=65;
+  gNodes.forEach(n=>{const d=Math.hypot(n.x-mx,n.y-my);if(d<bd){bd=d;best=n;}});
+  hov=best;
+});
+canvas.addEventListener('mouseleave',()=>{hov=null;});
+function frame(){
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+  const edges=[];
+  for(let i=0;i<gNodes.length-1;i++){
+    for(let j=i+1;j<gNodes.length;j++){
+      const d=Math.hypot(gNodes[j].x-gNodes[i].x,gNodes[j].y-gNodes[i].y);
+      if(d<PROX) edges.push([i,j]);
     }
+  }
+  const hovIdx=hov?gNodes.indexOf(hov):-1;
+  const hovConn=new Set();
+  edges.forEach(([a,b])=>{if(a===hovIdx)hovConn.add(b);if(b===hovIdx)hovConn.add(a);});
+  edges.forEach(([a,b])=>{
+    const isHE=hovIdx>=0&&(a===hovIdx||b===hovIdx);
+    ctx.beginPath(); ctx.moveTo(gNodes[a].x,gNodes[a].y); ctx.lineTo(gNodes[b].x,gNodes[b].y);
+    ctx.strokeStyle=isHE?'rgba(0,229,204,0.6)':'rgba(255,255,255,0.15)';
+    ctx.lineWidth=1; ctx.stroke();
   });
+  gNodes.forEach((n,i)=>{
+    const isHov=i===hovIdx,isConn=hovConn.has(i);
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.strokeStyle=isHov?n.color:(isConn?n.color+'cc':n.color+'99');
+    ctx.lineWidth=isHov?2.5:1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r*(isHov?.52:.40),0,Math.PI*2);
+    ctx.fillStyle=isHov?'#fff':'rgba(255,255,255,0.88)'; ctx.fill();
+    ctx.font='11px Inter,sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle=isHov?'#00E5CC':'rgba(255,255,255,0.52)';
+    ctx.fillText(n.label,n.x,n.y+n.r+13);
+  });
+  gNodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x-n.r<0||n.x+n.r>W){n.vx*=-1;n.x=Math.max(n.r,Math.min(W-n.r,n.x));}
+    if(n.y-n.r<0||n.y+n.r>H-28){n.vy*=-1;n.y=Math.max(n.r,Math.min(H-28-n.r,n.y));}
+  });
+  ctx.fillStyle='#000'; ctx.fillRect(0,H-28,W,28);
+  ctx.beginPath(); ctx.moveTo(0,H-28); ctx.lineTo(W,H-28);
+  ctx.strokeStyle='rgba(0,229,204,0.18)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.font='11px Inter,sans-serif'; ctx.textAlign='left';
+  ctx.fillStyle='rgba(255,255,255,0.38)';
+  ctx.fillText(gNodes.length+' nodes \xb7 '+edges.length+' edges \xb7 '+gNodes.filter(n=>n.type==='Contradiction').length+' contradictions detected',16,H-9);
+  requestAnimationFrame(frame);
 }
-buildNodes();
-
-let tick=0;
-function drawGraph() {
-  cx.clearRect(0,0,W,H);
-  tick++;
-  nodes.forEach(n => {
-    n.x+=n.vx; n.y+=n.vy; n.ph+=n.ps;
-    if(n.x<60||n.x>W-60) n.vx*=-1;
-    if(n.y<40||n.y>H-40) n.vy*=-1;
-  });
-  edges.forEach(([a,b]) => {
-    const na=nodes[a],nb=nodes[b];
-    const al=.08+.06*Math.sin(tick*.018+a);
-    const g=cx.createLinearGradient(na.x,na.y,nb.x,nb.y);
-    g.addColorStop(0,na.color+'00');
-    g.addColorStop(.5,na.color+(Math.round(al*255).toString(16).padStart(2,'0')));
-    g.addColorStop(1,nb.color+'00');
-    cx.strokeStyle=g; cx.lineWidth=1.2;
-    cx.beginPath(); cx.moveTo(na.x,na.y); cx.lineTo(nb.x,nb.y); cx.stroke();
-  });
-  nodes.forEach(n => {
-    const pr = n.r + 2*Math.sin(n.ph);
-    const grd=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,pr*4);
-    grd.addColorStop(0,n.color+'33'); grd.addColorStop(1,'transparent');
-    cx.fillStyle=grd; cx.beginPath(); cx.arc(n.x,n.y,pr*4,0,Math.PI*2); cx.fill();
-    cx.fillStyle=n.color; cx.beginPath(); cx.arc(n.x,n.y,pr,0,Math.PI*2); cx.fill();
-    cx.fillStyle='rgba(255,255,255,.65)'; cx.font='10px Inter,sans-serif'; cx.textAlign='center';
-    cx.fillText(n.label,n.x,n.y+pr+13);
-  });
-  requestAnimationFrame(drawGraph);
-}
-drawGraph();
+frame();
+})();
 
 // BENTO ITEMS
 const arenaItems = [
