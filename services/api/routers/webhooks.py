@@ -85,7 +85,7 @@ async def slack_webhook(request: Request) -> Response:
 @router.post("/api/webhooks/clerk")
 async def clerk_webhook(request: Request) -> dict[str, Any]:
     secret = os.environ.get("CLERK_WEBHOOK_SECRET", "")
-    body = await request.body()
+    _body = await request.body()
     svix_id = request.headers.get("svix-id")
     svix_timestamp = request.headers.get("svix-timestamp")
     svix_signature = request.headers.get("svix-signature")

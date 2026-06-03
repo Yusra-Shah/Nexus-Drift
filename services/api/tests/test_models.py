@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pytest
 from uuid import UUID
 
 from shared.models.graph_nodes import (
@@ -8,23 +7,17 @@ from shared.models.graph_nodes import (
     DecisionOutcome,
     DecisionType,
     Person,
-    Concept,
     Risk,
     RiskType,
     Severity,
     Contradiction,
     ContradictionType,
-    Simulation,
-    Artifact,
     ArtifactSource,
-    ArtifactType,
 )
 from shared.models.agent_events import (
     RawArtifactEvent,
-    ParsedEntityEvent,
     GraphUpdateEvent,
     GraphOperation,
-    AlertEvent,
 )
 
 
