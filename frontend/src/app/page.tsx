@@ -16,7 +16,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#000;-webkit
 a{text-decoration:none;color:inherit}
 nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,0.06)}
 .nav-logo{font-size:15px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
-.nav-links{display:flex;gap:32px}
+.nav-links{display:flex;gap:32px;position:relative}
 .nav-links a{font-size:14px;font-weight:500;color:#555;transition:color .2s}
 .nav-links a:hover{color:#000}
 .nav-ctas{display:flex;gap:10px}
@@ -94,10 +94,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:cen
 .sbtn:hover{background:#000;color:#00E5CC}
 .modules{padding:100px 48px;background:#fff}
 .modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-.mod-cards{display:flex;flex-direction:column;gap:14px}
-.mc{background:#111;color:#fff;border-radius:18px;padding:22px 26px;transition:transform .3s cubic-bezier(.22,1,.36,1);cursor:default}
-.mc:nth-child(2){transform:translateX(22px)}.mc:nth-child(3){transform:translateX(44px)}
-.mc:hover{transform:translateX(0) !important;box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.mod-cards{display:flex;flex-direction:row;gap:10px;align-items:stretch;perspective:1000px}
+.mc{background:#111;color:#fff;border-radius:18px;padding:22px 26px;transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s;cursor:default;flex:1;min-width:0}
+.mc:nth-child(1){transform:rotateY(-15deg)}.mc:nth-child(2){transform:rotateY(0deg)}.mc:nth-child(3){transform:rotateY(15deg)}
+.mc:hover{transform:rotateY(0deg) scale(1.02) !important;box-shadow:0 12px 40px rgba(0,0,0,.3)}
 .mc-lbl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#00E5CC;margin-bottom:6px}
 .mc h4{font-size:15px;font-weight:700;margin-bottom:8px}
 .mc-meta{display:flex;align-items:center;gap:8px}
@@ -149,14 +149,25 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
   .cards-grid{grid-template-columns:1fr;gap:12px}
   .bento-arena{height:900px}
   .modules-grid{grid-template-columns:1fr;gap:40px}
+  .mod-cards{flex-direction:column}
+  .mc:nth-child(1){transform:none}.mc:nth-child(2){transform:none}.mc:nth-child(3){transform:none}
   .dev{grid-template-columns:1fr;gap:40px}
   .ft{grid-template-columns:1fr 1fr;gap:28px}
 }
+#cursor-glow{position:fixed;pointer-events:none;z-index:9999;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,204,.38) 0%,rgba(0,229,204,.08) 50%,transparent 70%);transform:translate(-50%,-50%);mix-blend-mode:multiply;will-change:left,top;opacity:0;transition:opacity .3s}
+#pixel-canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:998;opacity:0}
+.nav-indicator{position:absolute;bottom:0;height:2px;background:#00E5CC;border-radius:2px;pointer-events:none;opacity:0;transition:left .32s cubic-bezier(.22,1,.36,1),width .32s cubic-bezier(.22,1,.36,1),opacity .2s}
+.hero-loop-svg{animation:loopSpin 22s linear infinite;flex-shrink:0;opacity:.7}
+@keyframes loopSpin{to{transform:rotate(360deg)}}
+.hero-btns-row{display:flex;align-items:center;gap:28px;margin-bottom:56px;flex-wrap:wrap}
       `}</style>
 
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+      <div id="cursor-glow" />
+      <canvas id="pixel-canvas" />
 
       <nav>
         <div className="nav-logo">⬡ Nexus Drift</div>
@@ -180,9 +191,19 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
           <span className="teal">ENGINE</span>
         </h1>
         <p className="hero-sub">Your organization thinks, remembers, and fails. Nexus Drift makes that intelligence visible — in real time, autonomously, forever.</p>
-        <div className="hero-btns">
-          <a href="https://nexus-drift.vercel.app/sign-up" className="btn btn-dark">Start Free Trial</a>
-          <a href="https://nexus-drift.vercel.app/dashboard" className="btn btn-grey">Book a Demo</a>
+        <div className="hero-btns-row">
+          <div className="hero-btns" style={{margin:0}}>
+            <a href="https://nexus-drift.vercel.app/sign-up" className="btn btn-dark">Start Free Trial</a>
+            <a href="https://nexus-drift.vercel.app/dashboard" className="btn btn-grey">Book a Demo</a>
+          </div>
+          <svg className="hero-loop-svg" width="140" height="140" viewBox="0 0 140 140">
+            <defs>
+              <path id="loopCircle" d="M 70,70 m -52,0 a 52,52 0 1,1 104,0 a 52,52 0 1,1 -104,0" />
+            </defs>
+            <text fontSize="9.5" fontWeight="700" letterSpacing="2.2" fill="#00E5CC" fontFamily="Inter,sans-serif" textAnchor="start">
+              <textPath href="#loopCircle">ORGANIZATIONAL COGNITION ENGINE · AUTONOMOUS AGENTS · KNOWLEDGE GRAPH ·</textPath>
+            </text>
+          </svg>
         </div>
         <div className="graph-wrap reveal">
           <canvas id="graph" />
@@ -609,12 +630,73 @@ function setTab(el,id) {
   document.getElementById(id).classList.add('on');
 }
 
-// MODULE CARD HOVER
+// MODULE CARD HOVER (dome)
+const domeAngles=[-15,0,15];
 document.querySelectorAll('.mc').forEach((mc,i)=>{
-  const base=i*22;
-  mc.addEventListener('mouseenter',()=>{ mc.style.transform='translateX(0) scale(1.01)'; });
-  mc.addEventListener('mouseleave',()=>{ mc.style.transform='translateX('+base+'px)'; });
+  mc.addEventListener('mouseenter',()=>{ mc.style.transform='rotateY(0deg) scale(1.02)'; });
+  mc.addEventListener('mouseleave',()=>{ mc.style.transform='rotateY('+(domeAngles[i]||0)+'deg)'; });
 });
+
+// CURSOR GLOW (80ms lag via lerp)
+const glow=document.getElementById('cursor-glow');
+let gx=window.innerWidth/2,gy=window.innerHeight/2,tx=gx,ty=gy;
+document.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;glow.style.opacity='1';});
+(function animGlow(){
+  gx+=(tx-gx)*.18; gy+=(ty-gy)*.18;
+  glow.style.left=gx+'px'; glow.style.top=gy+'px';
+  const ex=Math.min(gx/window.innerWidth,(window.innerWidth-gx)/window.innerWidth);
+  const ey=Math.min(gy/window.innerHeight,(window.innerHeight-gy)/window.innerHeight);
+  glow.style.opacity=Math.min(Math.min(ex,ey)*14,1);
+  requestAnimationFrame(animGlow);
+})();
+
+// FLOWING NAV INDICATOR
+const navL=document.querySelector('.nav-links');
+if(navL){
+  const ind=document.createElement('div');
+  ind.className='nav-indicator';
+  navL.appendChild(ind);
+  navL.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('mouseenter',()=>{
+      const ar=a.getBoundingClientRect(),nr=navL.getBoundingClientRect();
+      ind.style.left=(ar.left-nr.left)+'px';
+      ind.style.width=ar.width+'px';
+      ind.style.opacity='1';
+    });
+  });
+  navL.addEventListener('mouseleave',()=>{ind.style.opacity='0';});
+}
+
+// PIXEL DISSOLVE TRANSITION
+const pcvs=document.getElementById('pixel-canvas');
+const pctx=pcvs.getContext('2d');
+function resizePc(){pcvs.width=window.innerWidth;pcvs.height=window.innerHeight;}
+resizePc();
+window.addEventListener('resize',resizePc);
+let lastSec=null,pixId=null;
+function runPixel(){
+  if(pixId) cancelAnimationFrame(pixId);
+  pcvs.style.opacity='1';
+  const sz=9,cols=Math.ceil(pcvs.width/sz),rows=Math.ceil(pcvs.height/sz);
+  const cells=[];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) cells.push({x:c*sz,y:r*sz,dl:Math.random()*300});
+  const t0=performance.now(),dur=650;
+  (function anim(now){
+    pctx.clearRect(0,0,pcvs.width,pcvs.height);
+    let done=true;
+    cells.forEach(cl=>{
+      const p=Math.max(0,Math.min(1,(now-t0-cl.dl)/(dur-cl.dl)));
+      if(p<1){done=false;pctx.fillStyle='rgba(0,229,204,'+(0.55*(1-p))+')';pctx.fillRect(cl.x,cl.y,sz-1,sz-1);}
+    });
+    if(!done){pixId=requestAnimationFrame(anim);}else{pcvs.style.opacity='0';}
+  })(performance.now());
+}
+const secIO2=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){if(lastSec&&lastSec!==e.target) runPixel();lastSec=e.target;}
+  });
+},{threshold:0.25});
+document.querySelectorAll('section').forEach(s=>secIO2.observe(s));
 `}} />
     </>
   );
