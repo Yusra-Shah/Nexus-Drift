@@ -18,7 +18,7 @@
 | nexusdrift-watchtower | https://nexusdrift-watchtower-7wguxf7noq-uc.a.run.app |
 | nexusdrift-scorer | https://nexusdrift-scorer-7wguxf7noq-uc.a.run.app |
 | nexusdrift-mcp-server | https://nexusdrift-mcp-server-7wguxf7noq-uc.a.run.app |
-| Frontend (Vercel) | https://nexusdrift.vercel.app *(run `vercel --prod` from frontend/ to deploy)* |
+| Frontend (Vercel) | https://nexus-drift.vercel.app |
 
 ## Infrastructure
 
