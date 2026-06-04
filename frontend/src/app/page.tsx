@@ -67,10 +67,16 @@ nav{position:fixed;top:0;left:0;right:0;z-index:999;display:flex;align-items:cen
 .card3.light .c3-tag{background:#e8e8e8;color:#666}
 .card3 h3{font-size:clamp(1.5rem,2.2vw,2rem);font-weight:800;line-height:1.1;margin-bottom:16px}
 .card3 p{font-size:15px;line-height:1.65;opacity:.75}
-.bento{padding:100px 48px 120px;background:#fff;overflow:hidden}
-.bento-h{font-size:clamp(2.2rem,5.5vw,5.5rem);font-weight:900;letter-spacing:-.03em;text-transform:uppercase;text-align:center;margin-bottom:0;color:#000}
-.bento-arena{position:relative;width:100%;height:640px;margin-top:0;overflow:hidden;background:#fff}
-.bi{position:absolute;display:flex;user-select:none;will-change:transform;cursor:default;transition:transform .25s cubic-bezier(.22,1,.36,1),outline .15s}
+.bento{padding:80px 48px 100px;background:#fff}
+.bento-inner{display:grid;grid-template-columns:500px 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto}
+.bento-arena{position:relative;width:500px;height:520px;overflow:hidden;flex-shrink:0}
+.bi{position:absolute;user-select:none;will-change:transform;cursor:default;transition:transform 0.3s cubic-bezier(.22,1,.36,1),box-shadow 0.25s}
+.bento-text-col{display:flex;flex-direction:column;gap:18px}
+.bento-chip{display:inline-block;background:#f0f0f0;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:600;color:#666;width:fit-content}
+.bento-headline{font-size:clamp(2rem,3.5vw,3rem);font-weight:900;letter-spacing:-.02em;line-height:1.1;color:#000}
+.bento-body{font-size:15px;color:#666;line-height:1.7;max-width:340px}
+.bento-link{color:#00E5CC;font-size:14px;font-weight:700;text-decoration:none}
+.bento-link:hover{text-decoration:underline}
 .score-sec{min-height:100vh;background:#00E5CC;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 48px;position:relative;overflow:hidden}
 .score-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 50%,rgba(255,255,255,.18) 0%,transparent 70%)}
 .score-eye{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.45);margin-bottom:16px;position:relative}
@@ -141,7 +147,8 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
   .partners{padding:40px 24px}.partners-row{gap:28px}
   .tagline-section,.features,.bento,.modules,.agents-bar,.dev,.score-sec,footer{padding-left:24px;padding-right:24px}
   .cards-grid{grid-template-columns:1fr;gap:12px}
-  .bento-arena{height:420px}
+  .bento-inner{grid-template-columns:1fr;gap:28px}
+  .bento-arena{width:100%;max-width:420px;height:460px;margin:0 auto}
   .modules-grid{grid-template-columns:1fr;gap:40px}
   .mod-cards{flex-direction:column}
   .mc:nth-child(1){transform:none}.mc:nth-child(2){transform:none}.mc:nth-child(3){transform:none}
@@ -230,19 +237,19 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
         <p className="features-label reveal">What makes Nexus Drift different</p>
         <div className="cards-grid">
           <div className="card3 dark reveal" style={{transitionDelay:'.05s'}}>
-            <div className="c3-icon">⚡</div>
+            <div className="c3-icon"><div style={{width:'32px',height:'32px',borderTop:'2px solid #00E5CC',borderLeft:'2px solid #00E5CC'}}></div></div>
             <span className="c3-tag">Instant Insights</span>
             <h3>Instant Intelligence</h3>
             <p>Knowledge surfaces in seconds. Not buried in Confluence or lost when engineers leave. Every decision, every reason — instantly queryable.</p>
           </div>
           <div className="card3 teal reveal" style={{transitionDelay:'.15s'}}>
-            <div className="c3-icon">🧠</div>
+            <div className="c3-icon"><div style={{width:'32px',height:'32px',border:'2px solid #fff',borderRadius:'50%'}}></div></div>
             <span className="c3-tag">Persistent Memory</span>
             <h3>Zero Knowledge Loss</h3>
             <p>Reasoning chains, architectural intent, and institutional decisions preserved — even when employees exit. The org remembers what people forget.</p>
           </div>
           <div className="card3 light reveal" style={{transitionDelay:'.25s'}}>
-            <div className="c3-icon">🤖</div>
+            <div className="c3-icon"><div style={{width:'24px',height:'24px',border:'2px solid #555',transform:'rotate(45deg)'}}></div></div>
             <span className="c3-tag">Autonomous</span>
             <h3>11 Autonomous Agents</h3>
             <p>Multi-agent system running 24/7, ingesting GitHub, Jira, Slack, Confluence and more. No configuration. No maintenance. Always on.</p>
@@ -251,9 +258,16 @@ footer{background:#000;color:#fff;padding:72px 48px 44px;border-top:1px solid #1
       </section>
 
       <section className="bento" id="bento">
-        <h2 className="bento-h reveal">YOUR COGNITION<br />GRAPH AWAITS</h2>
-        <div className="bento-arena" id="arena">
-          <canvas id="bento-lines" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:0}} />
+        <div className="bento-inner">
+          <div className="bento-arena" id="arena">
+            <canvas id="bento-lines" style={{position:'absolute',top:0,left:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:0}} />
+          </div>
+          <div className="bento-text-col">
+            <span className="bento-chip">Modules</span>
+            <h2 className="bento-headline">Your cognition graph<br />awaits</h2>
+            <p className="bento-body">11 autonomous agents continuously map your organization&apos;s knowledge, decisions, and expertise into a living graph.</p>
+            <a href="#features" className="bento-link">Explore all modules &#8594;</a>
+          </div>
         </div>
       </section>
 
@@ -543,117 +557,81 @@ function frame(){
 frame();
 })();
 
-// BENTO IMAGE CARDS
+// BENTO CAROUSEL (DUE-STYLE)
 (function(){
   var arena=document.getElementById('arena');
   if(!arena) return;
-  var C=[
-    {tp:'img',img:'/bento/GRAPH%20EXPLORER.jfif',           tint:'#00E5CC',lbl:'GRAPH EXPLORER',        sub:'25 nodes in view', ss:'',                                                                    dot:false,nt:false,sx:20, sy:18},
-    {tp:'img',img:'/bento/KNOWLEDGE%20CHAOS.jfif',          nt:true,dot:true,                                                                                                                             sx:258,sy:35},
-    {tp:'img',img:'/bento/INGESTION%20AGENTS.jfif',         tint:'#00E5CC',lbl:'INGESTION AGENTS',      sub:'7 sources active', ss:'',                                                                    dot:false,nt:false,sx:498,sy:12},
-    {tp:'img',img:'/bento/ORGANIZATIONAL%20COGNITION.jfif', nt:true,dot:false,                                                                                                                            sx:762,sy:25},
-    {tp:'img',img:'/bento/DECISION%20DNA.jfif',             tint:'#7B2FFF',lbl:'DECISION DNA',          sub:'Pattern detected', ss:'',                                                                    dot:false,nt:false,sx:58, sy:228},
-    {tp:'img',img:'/bento/CONSCIOUSNESS%20SCORE.jfif',      tint:'#00E5CC',lbl:'CONSCIOUSNESS SCORE',   sub:'84 / 100',         ss:'font-size:14px;font-weight:700;font-family:Courier New,monospace;',   dot:false,nt:false,sx:295,sy:218},
-    {tp:'img',img:'/bento/EXPERTISE%20MAP.jfif',            tint:'#00E5CC',lbl:'EXPERTISE MAP',         sub:'6 people mapped',  ss:'',                                                                    dot:false,nt:false,sx:548,sy:232},
-    {tp:'img',img:'/bento/CONTRADICTION%20DETECTOR.jfif',   tint:'#FF4444',lbl:'CONTRADICTION DETECTOR',sub:'3 conflicts found',ss:'',                                                                    dot:false,nt:false,sx:790,sy:222},
-    {tp:'t9', sx:20, sy:432},
-    {tp:'t10',sx:262,sy:424},
-    {tp:'t11',sx:512,sy:436},
-    {tp:'t12',sx:768,sy:428},
-  ];
-  var A=[
-    {fx:.52,fy:.61,ax:18,ay:14,px:0,  py:.8, ra:2.5,rp:0  },
-    {fx:.63,fy:.48,ax:18,ay:14,px:1.2,py:2.1,ra:3.0,rp:1.1},
-    {fx:.71,fy:.55,ax:18,ay:14,px:.5, py:1.7,ra:2.0,rp:2.3},
-    {fx:.44,fy:.67,ax:18,ay:14,px:2.3,py:.4, ra:2.8,rp:.6 },
-    {fx:.58,fy:.72,ax:18,ay:14,px:3.1,py:1.0,ra:3.0,rp:1.8},
-    {fx:.66,fy:.49,ax:18,ay:14,px:.9, py:2.8,ra:2.2,rp:3.0},
-    {fx:.53,fy:.69,ax:18,ay:14,px:1.8,py:.3, ra:2.7,rp:.4 },
-    {fx:.79,fy:.56,ax:18,ay:14,px:2.6,py:1.5,ra:1.8,rp:2.1},
-    {fx:.47,fy:.64,ax:18,ay:14,px:1.4,py:3.2,ra:3.0,rp:1.3},
-    {fx:.61,fy:.43,ax:18,ay:14,px:.7, py:1.9,ra:2.4,rp:2.7},
-    {fx:.55,fy:.73,ax:18,ay:14,px:2.0,py:.6, ra:2.9,rp:.9 },
-    {fx:.68,fy:.51,ax:18,ay:14,px:3.4,py:2.2,ra:2.1,rp:3.5},
+  var CX=250,CY=260,ORX=120,ORY=60,N=12;
+  var TILTS=[-15,8,-6,12,-20,5,-10,18,-3,14,-8,10];
+  var CARDS=[
+    {tp:'img',img:'/bento/GRAPH%20EXPLORER.jfif',           tint:'#00E5CC',lbl:'GRAPH EXPLORER',   sub:'25 nodes',         ss:''},
+    {tp:'img',img:'/bento/KNOWLEDGE%20CHAOS.jfif',           nt:true},
+    {tp:'img',img:'/bento/INGESTION%20AGENTS.jfif',          tint:'#00E5CC',lbl:'INGESTION AGENTS', sub:'7 sources',        ss:''},
+    {tp:'img',img:'/bento/ORGANIZATIONAL%20COGNITION.jfif',  nt:true},
+    {tp:'img',img:'/bento/DECISION%20DNA.jfif',              tint:'#7B2FFF',lbl:'DECISION DNA',     sub:'Pattern detected', ss:''},
+    {tp:'img',img:'/bento/CONSCIOUSNESS%20SCORE.jfif',       tint:'#00E5CC',lbl:'CONSCIOUSNESS',    sub:'84 / 100',         ss:'font-size:13px;font-weight:700;'},
+    {tp:'img',img:'/bento/EXPERTISE%20MAP.jfif',             tint:'#00E5CC',lbl:'EXPERTISE MAP',    sub:'6 mapped',         ss:''},
+    {tp:'img',img:'/bento/CONTRADICTION%20DETECTOR.jfif',    tint:'#FF4444',lbl:'CONTRADICTIONS',   sub:'3 conflicts',      ss:''},
+    {tp:'t9'},{tp:'t10'},{tp:'t11'},{tp:'t12'},
   ];
   function mkCard(c){
     if(c.tp==='img'){
       var h='<div style="position:absolute;top:0;left:0;width:100%;height:100%;background-image:url('+c.img+');background-size:cover;background-position:center;"></div>';
-      if(c.dot) h+='<div style="position:absolute;bottom:10px;right:10px;width:8px;height:8px;border-radius:50%;background:#00E5CC;"></div>';
-      else if(!c.nt) h+='<div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);"></div><div style="position:absolute;bottom:12px;left:12px;"><div style="font-size:10px;color:'+c.tint+';font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">'+c.lbl+'</div><div style="font-size:12px;color:#fff;font-weight:500;'+c.ss+'">'+c.sub+'</div></div>';
+      if(!c.nt) h+='<div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent 60%);"></div><div style="position:absolute;bottom:10px;left:10px;"><div style="font-size:9px;color:'+c.tint+';font-weight:800;letter-spacing:.09em;text-transform:uppercase;margin-bottom:2px">'+c.lbl+'</div><div style="font-size:11px;color:#fff;font-weight:500;'+c.ss+'">'+c.sub+'</div></div>';
       return h;
     }
-    if(c.tp==='t9')  return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:flex;flex-direction:column;justify-content:center;padding:24px;box-sizing:border-box;"><div style="font-size:10px;color:#FF4444;font-weight:800;letter-spacing:.1em;text-transform:uppercase">RISK FORECASTING</div><div style="height:8px"></div><div style="font-size:13px;color:#fff;font-weight:500">Predict before it breaks</div><div style="height:12px"></div><div style="height:1px;background:#FF4444;"></div></div>';
-    if(c.tp==='t10') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#00E5CC;display:flex;flex-direction:column;justify-content:center;padding:24px;box-sizing:border-box;"><div style="font-size:10px;color:#000;font-weight:800;letter-spacing:.1em;text-transform:uppercase">TIME MACHINE</div><div style="height:8px"></div><div style="font-size:13px;color:#000;font-weight:500">Navigate your history</div><div style="height:12px"></div><div style="display:flex;justify-content:space-between;width:100%;"><div style="width:8px;height:8px;background:#000;"></div><div style="width:8px;height:8px;background:#000;"></div><div style="width:8px;height:8px;background:#000;"></div></div></div>';
-    if(c.tp==='t11') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;border:1px solid #EEE;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding:24px;"><div style="font-size:10px;color:#333;font-weight:800;letter-spacing:.1em;text-transform:uppercase">WATCHTOWER</div><div style="height:6px"></div><div style="font-size:13px;color:#333">3 alerts active</div><div style="height:8px"></div><div style="display:flex;align-items:center;gap:8px;"><div style="width:8px;height:8px;border-radius:50%;background:#FF4444;animation:bpulse 1.5s infinite;flex-shrink:0"></div><span style="font-size:11px;color:#FF4444;font-weight:600">LIVE</span></div></div>';
-    if(c.tp==='t12') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#C6F135;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;"><div style="font-size:10px;color:#000;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:center">NEAR-INSTANT REASONING</div><div style="height:8px"></div><div style="font-size:12px;color:#000;text-align:center">sub-second latency</div></div>';
+    if(c.tp==='t9')  return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#111;display:flex;flex-direction:column;justify-content:center;padding:20px;box-sizing:border-box;"><div style="font-size:9px;color:#FF4444;font-weight:800;letter-spacing:.09em;text-transform:uppercase">RISK FORECASTING</div><div style="height:8px"></div><div style="font-size:12px;color:#fff;font-weight:500">Predict before it breaks</div><div style="flex:1"></div><div style="height:1px;background:#FF4444;"></div></div>';
+    if(c.tp==='t10') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#00E5CC;display:flex;flex-direction:column;justify-content:center;padding:20px;box-sizing:border-box;"><div style="font-size:9px;color:#000;font-weight:800;letter-spacing:.09em;text-transform:uppercase">TIME MACHINE</div><div style="height:8px"></div><div style="font-size:12px;color:#000;font-weight:500">Navigate your history</div></div>';
+    if(c.tp==='t11') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;border:1px solid #EEE;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding:20px;"><div style="font-size:9px;color:#333;font-weight:800;letter-spacing:.09em;text-transform:uppercase">WATCHTOWER</div><div style="height:6px"></div><div style="font-size:12px;color:#333">3 alerts active</div><div style="height:8px"></div><div style="display:flex;align-items:center;gap:7px;"><div style="width:6px;height:6px;border-radius:50%;background:#FF4444;animation:bpulse 1.5s infinite;flex-shrink:0"></div><span style="font-size:11px;color:#FF4444;font-weight:600">LIVE</span></div></div>';
+    if(c.tp==='t12') return '<div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#C6F135;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;"><div style="font-size:9px;color:#000;font-weight:800;letter-spacing:.09em;text-transform:uppercase;text-align:center">NEAR-INSTANT REASONING</div><div style="height:8px"></div><div style="font-size:11px;color:#000;text-align:center">sub-second</div></div>';
     return '';
   }
-  var CX=400,CY=220;
-  var items=C.map(function(c,i){
+  var items=CARDS.map(function(c,i){
     var el=document.createElement('div');
     el.className='bi';
-    el.style.cssText='position:absolute;width:200px;height:200px;border-radius:16px;overflow:hidden;z-index:1;box-sizing:border-box;left:'+CX+'px;top:'+CY+'px;opacity:0;transform:scale(0.3) rotateZ(0deg);';
+    el.style.cssText='position:absolute;width:160px;height:200px;border-radius:16px;overflow:hidden;box-sizing:border-box;';
     el.innerHTML=mkCard(c);
     arena.appendChild(el);
-    var hov=false;
-    el.addEventListener('mouseenter',function(){hov=true;el.style.transform='scale(1.06)';el.style.boxShadow='0 12px 40px rgba(0,0,0,0.15)';el.style.zIndex='10';});
-    el.addEventListener('mouseleave',function(){hov=false;el.style.boxShadow='';el.style.zIndex='1';});
-    return {el:el,c:c,a:A[i],h:function(){return hov;},cx:c.sx+100,cy:c.sy+100};
+    var hovering=false,frozenAngle=0;
+    el.addEventListener('mouseenter',function(){
+      hovering=true;
+      frozenAngle=groupAngle+i*(2*Math.PI/N);
+      el.style.transform='translate(-50%,-50%) rotate('+TILTS[i]+'deg) scale(1.12)';
+      el.style.boxShadow='0 16px 48px rgba(0,0,0,0.2)';
+      el.style.zIndex='100';
+    });
+    el.addEventListener('mouseleave',function(){
+      hovering=false;
+      el.style.boxShadow='';
+    });
+    return {el:el,tilt:TILTS[i],h:function(){return hovering;},fa:function(){return frozenAngle;}};
   });
-  var wm=document.createElement('div');
-  wm.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;z-index:0';
-  wm.innerHTML='<div style="font-size:clamp(3rem,6vw,5rem);font-weight:900;letter-spacing:-.03em;color:#f0f0f0;text-transform:uppercase;line-height:.9">YOUR COGNITION<br>GRAPH AWAITS</div>';
-  arena.insertBefore(wm,arena.firstChild);
-  var lc=document.getElementById('bento-lines');
-  var lctx=lc?lc.getContext('2d'):null;
-  function resizeLC(){if(!lc)return;lc.width=arena.offsetWidth||1000;lc.height=arena.offsetHeight||640;}
-  resizeLC(); window.addEventListener('resize',resizeLC);
-  items.forEach(function(it,i){
-    setTimeout(function(){
-      it.el.style.transition='left 750ms cubic-bezier(0.34,1.56,0.64,1),top 750ms cubic-bezier(0.34,1.56,0.64,1),transform 750ms cubic-bezier(0.34,1.56,0.64,1),opacity 500ms ease';
-      it.el.style.left=it.c.sx+'px'; it.el.style.top=it.c.sy+'px';
-      it.el.style.transform='scale(1) rotateZ(0deg)'; it.el.style.opacity='1';
-    },i*36);
-  });
-  setTimeout(function(){
-    items.forEach(function(it){it.el.style.transition='transform 0.25s cubic-bezier(.22,1,.36,1),box-shadow 0.25s';});
-    var t0=null;
-    function bentoFrame(ts){
-      if(!t0)t0=ts;
-      var t=(ts-t0)*0.001;
-      items.forEach(function(it){
-        if(it.h())return;
-        var a=it.a;
-        var x=it.c.sx+a.ax*Math.sin(a.fx*t+a.px);
-        var y=it.c.sy+a.ay*Math.sin(a.fy*t+a.py);
-        var r=a.ra*Math.sin(0.15*t+a.rp);
-        it.el.style.left=x.toFixed(1)+'px'; it.el.style.top=y.toFixed(1)+'px';
-        it.el.style.transform='scale(1) rotateZ('+r.toFixed(2)+'deg)';
-        it.cx=x+100; it.cy=y+100;
-      });
-      if(lctx){
-        lctx.clearRect(0,0,lc.width,lc.height);
-        var P=200;
-        for(var i=0;i<items.length-1;i++){
-          for(var j=i+1;j<items.length;j++){
-            var dx=items[j].cx-items[i].cx,dy=items[j].cy-items[i].cy;
-            var d=Math.sqrt(dx*dx+dy*dy);
-            if(d<P){
-              var isH=items[i].h()||items[j].h();
-              var al=(1-d/P);
-              lctx.beginPath();lctx.moveTo(items[i].cx,items[i].cy);lctx.lineTo(items[j].cx,items[j].cy);
-              lctx.strokeStyle=isH?'rgba(0,229,204,'+(al*0.5).toFixed(3)+')':'rgba(0,0,0,'+(al*0.06).toFixed(3)+')';
-              lctx.lineWidth=1;lctx.stroke();
-            }
-          }
-        }
+  var groupAngle=0;
+  function bentoFrame(){
+    groupAngle+=0.008;
+    items.forEach(function(it,i){
+      var angle,x,y,sc,zi;
+      if(it.h()){
+        angle=it.fa();
+        x=CX+Math.cos(angle)*ORX;
+        y=CY+Math.sin(angle)*ORY;
+        it.el.style.left=x+'px'; it.el.style.top=y+'px';
+        return;
       }
-      requestAnimationFrame(bentoFrame);
-    }
+      angle=groupAngle+i*(2*Math.PI/N);
+      x=CX+Math.cos(angle)*ORX;
+      y=CY+Math.sin(angle)*ORY;
+      var sinA=Math.sin(angle);
+      sc=(0.88+(sinA+1)*0.5*(1.05-0.88)).toFixed(3);
+      zi=Math.round((sinA+1)*6)+1;
+      it.el.style.left=x+'px'; it.el.style.top=y+'px';
+      it.el.style.transform='translate(-50%,-50%) rotate('+it.tilt+'deg) scale('+sc+')';
+      it.el.style.zIndex=zi;
+    });
     requestAnimationFrame(bentoFrame);
-  },1200);
+  }
+  requestAnimationFrame(bentoFrame);
 })();
-
 // SCORE GAUGE
 function drawGauge(val) {
   const gc = document.getElementById('gauge');
